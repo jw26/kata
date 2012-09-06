@@ -31,4 +31,23 @@ describe BankOcr do
       subject.status_of("66437??95").should == "ILL"
     end
   end
+
+  describe 'user story 4' do
+    it 'should generate a set of alternatives' do
+      subject.alternatives_for(
+        "   "+
+        " _|"+
+        "  |").should == [1,4]
+
+      subject.alternatives_for(
+        "   "+
+        "| |"+
+        "|_|").should == [0]
+
+      subject.alternatives_for(
+        " _ "+
+        " _ "+
+        " _|").should == [3,5]
+    end
+  end
 end

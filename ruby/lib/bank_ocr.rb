@@ -23,6 +23,12 @@ class BankOcr
     end
   end
 
+  def alternatives_for t
+    @lookup.values_at(*@lookup.keys.select do |e|
+      e.chars.zip(t.chars).count{|i| i.to_set.length > 1} == 1
+    end)
+  end
+
   def read_file f
     # for each block of 4 lines
     File.readlines(f).each_slice(4).map do |line|
