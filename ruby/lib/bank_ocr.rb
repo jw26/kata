@@ -12,15 +12,21 @@ class BankOcr
 
   def status_of ac
 
-    return 'ILL' if ac.include? '?'
+    return ' ILL' if ac.include? '?'
 
-    if ac.reverse.chars.each_with_index.map do |i,j|
-      i.to_i+((j+2)%10)
-    end.reduce(:*) % 11 == 0
-      ''
+    if is_err?(ac.reverse.chars.map(&:to_i))
+      ' ERR'
     else
-      'ERR'
+      ''
     end
+  end
+
+  def is_ill? c
+    c.count('?') > 1
+  end
+
+  def is_err? d
+    d.each_with_index.map {|x,i| x*(i+1) }.reduce(:+) % 11 != 0
   end
 
   def alternatives_for t
@@ -43,7 +49,35 @@ class BankOcr
       # build strings made up of the zipped blocks of 3..
       # ["123123","456456"]
       # and then look them up
-      head.zip(*tail).map(&:join).map{|i| @lookup[i]}.join
+      codes = head.zip(*tail).map do |c|
+        [ @lookup[c.join] ] + alternatives_for(c.join)
+      end
+
+      original = codes.map(&:first)
+
+      if original.count('?') >= 1
+        original.join + " ILL"
+      else
+
+        results = []
+
+        (0..8).each do |i|
+          codes[i] = codes[i].reverse
+          while codes[i].count > 1
+            c = codes.map(&:first)
+            results.push(c.join) unless is_err?(c.reverse)
+            codes[i].shift
+          end
+        end
+
+        if results.count == 1
+          results.first
+        elsif results.count > 1
+          original.join + " AMB " + results.inspect
+        else
+          original.join
+        end
+      end
     end
   end
 end
