@@ -2,6 +2,7 @@ package bankocr
 
 import (
   "strings"
+  "strconv"
 //  "fmt"
 )
 
@@ -32,6 +33,36 @@ func verifies(c []int) bool {
     t += v*(i+1)
   }
   return (t % 11) != 0
+}
+
+func contains_minus_one(in []int) bool {
+  for _, v := range in {
+    if v == -1 {
+      return true
+    }
+  }
+  return false
+}
+
+func prepare_for_output(in []int) string {
+  s := []string {}
+  for _, v := range in {
+    if v < 0 {
+      s = append(s, "?")
+    } else {
+      s = append(s, strconv.Itoa(v))
+    }
+  }
+
+  r := strings.Join(s, "")
+  if !verifies(in) {
+    if contains_minus_one(in) {
+      r += " ILL"
+    } else {
+      r += " ERR"
+    }
+  }
+  return r
 }
 
 func lookup_numbers(s []string) []int {
