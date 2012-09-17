@@ -1,19 +1,7 @@
--module(bankocr_app).
+-module(bankocr).
 
--behaviour(application).
+-export([lookup_char/1, parse/1, valid/1, prepare_output/1]).
 
-%% Application callbacks
--export([start/2, stop/1, lookup_char/1, parse/1, valid/1, prepare_output/1]).
-
-%% ===================================================================
-%% Application callbacks
-%% ===================================================================
-
-start(_StartType, _StartArgs) ->
-  bankocr_sup:start_link().
-
-stop(_State) ->
-  ok.
 
 lookup_char(Char) ->
   Lookup = [

@@ -4,9 +4,9 @@
 lookup_test_() ->
   {"Should be able to lookup code chars",
     fun() ->
-        ?assertEqual(1, bankocr_app:lookup_char("     |  |")),
-        ?assertEqual(3, bankocr_app:lookup_char(" _  _| _|")),
-        ?assertEqual(6, bankocr_app:lookup_char(" _ |_ |_|"))
+        ?assertEqual(1, bankocr:lookup_char("     |  |")),
+        ?assertEqual(3, bankocr:lookup_char(" _  _| _|")),
+        ?assertEqual(6, bankocr:lookup_char(" _ |_ |_|"))
     end
   }.
 
@@ -23,7 +23,7 @@ output_illerr_test_() ->
           "?23456789 ILL",
           "987654321 ERR"],
 
-        Got = [bankocr_app:prepare_output(X) || X <- Input],
+        Got = [bankocr:prepare_output(X) || X <- Input],
 
         ?assertEqual(Expected,Got)
     end
@@ -42,7 +42,7 @@ validate_test_() ->
 
         Expected = [true, false, true, true, true, false],
 
-        Got = [bankocr_app:valid(X) || X <- Input],
+        Got = [bankocr:valid(X) || X <- Input],
 
         ?assertEqual(Expected,Got)
     end
@@ -63,7 +63,7 @@ parse_test_() ->
            "\n"], "\n"),
 
         Expected = [ [1,2,3,4,5,6,7,8,9], [1,2,3,4,5,6,7,8,9] ],
-        Got = bankocr_app:parse(Input),
+        Got = bankocr:parse(Input),
 
         ?assertEqual(Expected,Got)
     end
