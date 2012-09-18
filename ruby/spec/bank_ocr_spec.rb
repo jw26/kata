@@ -20,15 +20,21 @@ describe BankOcr do
 
   describe 'user story 3' do
     it 'should check validity' do
-      subject.status_of("000000051").should == ""
-      subject.status_of("777777177").should == ""
-      subject.status_of("993999999").should == ""
-      subject.status_of("664371495").should == " ERR"
-      subject.status_of("66437??95").should == " ILL"
+      [
+        [1,2,3,4,5,6,7,8,9],
+        ['?',2,3,4,5,6,7,8,9],
+        [0,0,0,0,0,0,0,5,1],
+        [7,7,7,7,7,7,1,7,7],
+        [9,9,3,9,9,9,9,9,9],
+        [9,8,7,6,5,4,3,2,1]
+      ].map do |e|
+        subject.valid? e
+      end.should == [true, false, true, true, true, false]
+
     end
   end
 
-  describe 'user story 4' do
+  pending 'rollback guessing stuff for a bit', 'user story 4' do
     it 'should generate a set of alternatives' do
       subject.alternatives_for(
         "   "+

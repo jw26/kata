@@ -10,29 +10,20 @@ class BankOcr
     })
   end
 
-  def status_of ac
+  def valid? d
+    d.count('?') == 0 and d.each_with_index.map {|x,i| x*(i+1) }.reduce(:+) % 11 != 0
+  end
 
-    return ' ILL' if ac.include? '?'
-
-    if is_err?(ac.reverse.chars.map(&:to_i))
-      ' ERR'
+  def prepare_output c
+    if c.count('?') > 0
+      c.join + " ILL"
     else
-      ''
+      if valid? c
+        c.join
+      else
+        c.join + " ERR"
+      end
     end
-  end
-
-  def is_ill? c
-    c.count('?') > 1
-  end
-
-  def is_err? d
-    d.each_with_index.map {|x,i| x*(i+1) }.reduce(:+) % 11 != 0
-  end
-
-  def alternatives_for t
-    @lookup.values_at(*@lookup.keys.select do |e|
-      e.chars.zip(t.chars).count{|i| i.to_set.length > 1} == 1
-    end)
   end
 
   def read_file f
@@ -49,35 +40,8 @@ class BankOcr
       # build strings made up of the zipped blocks of 3..
       # ["123123","456456"]
       # and then look them up
-      codes = head.zip(*tail).map do |c|
-        [ @lookup[c.join] ] + alternatives_for(c.join)
-      end
-
-      original = codes.map(&:first)
-
-      if original.count('?') >= 1
-        original.join + " ILL"
-      else
-
-        results = []
-
-        (0..8).each do |i|
-          codes[i] = codes[i].reverse
-          while codes[i].count > 1
-            c = codes.map(&:first)
-            results.push(c.join) unless is_err?(c.reverse)
-            codes[i].shift
-          end
-        end
-
-        if results.count == 1
-          results.first
-        elsif results.count > 1
-          original.join + " AMB " + results.inspect
-        else
-          original.join
-        end
-      end
+      prepare_output(
+        head.zip(*tail).map{|c| @lookup[c.join] })
     end
   end
 end
