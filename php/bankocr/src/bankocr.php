@@ -1,12 +1,28 @@
 <?php
 namespace bankocr;
 
+function prepare_for_output($in) {
+  return array_map(
+    function($i) {
+      if(in_array(-1,$i)) {
+        return implode(
+          array_map(function($j) {return $j==-1 ? "?" : $j;}, $i)
+        ) . " ILL";
+      } else {
+        if(validate($i)) {
+          return implode($i);
+        } else {
+          return implode($i) . " ERR";
+        }
+      }
+    }, $in);
+}
+
 function validate($code) {
   $r = array();
+  if(in_array(-1,$code)) return false;
+
   for($i=0;$i<count($code);$i++) {
-    if(-1 == $code[$i]) {
-      return false;
-    }
     $r []= ($i+1)*$code[$i];
   }
   return (array_reduce($r, function($acc,$i) { return $acc+$i; }) % 11) !== 0;
@@ -20,7 +36,7 @@ function lookup($char) {
     " _ |_ |_|" => 6, " _   |  |" => 7,
     " _ |_||_|" => 8, " _ |_| _|" => 9,
   );
-  return $lookup[$char];
+  return isset($lookup[$char]) ? $lookup[$char] : -1;
 }
 
 function codes($in) {
