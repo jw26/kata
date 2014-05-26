@@ -52,8 +52,28 @@ local function validate (inp)
   return result % 11 == 0
 end
 
+local function prepare_for_output (inp)
+  local result = ""
+  local append = ""
+
+  if not validate(inp) then
+    append = " ERR"
+  end
+  for i=1,9 do
+    if inp[i] == -1 then
+      result = result .. "?"
+      append = " ILL"
+    else
+      result = result .. inp[i]
+    end
+  end
+
+  return result .. append
+end
+
 return {
   lookup = lookup,
   parse = parse,
-  validate = validate
+  validate = validate,
+  prepare_for_output = prepare_for_output
 }
