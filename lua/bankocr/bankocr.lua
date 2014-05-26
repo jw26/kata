@@ -41,8 +41,19 @@ local function parse (inp)
   return all
 end
 
+local function validate (inp)
+  local result = 0
+  local cnt = 1
+  for i=9,1,-1 do
+    result = result + inp[i]*cnt
+    cnt = cnt + 1
+  end
+
+  return result % 11 == 0
+end
 
 return {
   lookup = lookup,
-  parse = parse
+  parse = parse,
+  validate = validate
 }

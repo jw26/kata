@@ -42,3 +42,24 @@ describe("story 1", function()
   end)
 end)
 
+describe("story 2", function()
+  it("should validate", function()
+    local input = {
+      {1,2,3,4,5,6,7,8,9},
+      {-1,2,3,4,5,6,7,8,9},
+      {0,0,0,0,0,0,0,5,1},
+      {7,7,7,7,7,7,1,7,7},
+      {9,9,3,9,9,9,9,9,9},
+      {9,8,7,6,5,4,3,2,1}
+    }
+    local expected = {true, false, true, true, true, false}
+
+    local result = {}
+    for k, v in pairs(input) do
+      table.insert(result, bankocr.validate(v))
+    end
+
+    assert.same(expected, result)
+
+  end)
+end)
